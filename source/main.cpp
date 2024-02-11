@@ -9,7 +9,7 @@ int main()
 	gfxInitDefault();
 	consoleInit(GFX_BOTTOM, NULL);
 	const int exerciseCount = getExerciseCount();
-	int selection = 0;
+	int selection = exerciseCount-1;
 
 	// Main loop
 	while (aptMainLoop())
@@ -42,7 +42,6 @@ int main()
 			consoleInit(GFX_BOTTOM, NULL);
 		}
 	}
-	consoleClear();
 	gfxExit();
 	return 0;
 }

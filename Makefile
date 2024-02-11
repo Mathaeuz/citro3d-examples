@@ -81,9 +81,16 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+FOLDERS		:=
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(dir $(wildcard $(dir)/*/)))
+CPPFILES	:=	$(foreach dir,$(CPPFILES), $(wildcard $(dir)*.cpp))
+CPPFILES	:=  $(foreach dir,$(SOURCES),$(subst $(dir)/,,$(CPPFILES)))
+FOLDERS		:=  $(FOLDERS) $(addprefix $(BUILD)/,$(dir $(CPPFILES)))
+CPPFILES	:=	$(CPPFILES) $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
 SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
@@ -162,10 +169,13 @@ endif
 
 #---------------------------------------------------------------------------------
 all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
+	@ECHO cpp: $(CPPFILES)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
 	@mkdir -p $@
+	@echo f: $@/$(FOLDERS) 
+	@mkdir -p $(FOLDERS)
 
 ifneq ($(GFXBUILD),$(BUILD))
 $(GFXBUILD):
@@ -176,6 +186,8 @@ ifneq ($(DEPSDIR),$(BUILD))
 $(DEPSDIR):
 	@mkdir -p $@
 endif
+
+
 
 #---------------------------------------------------------------------------------
 clean:

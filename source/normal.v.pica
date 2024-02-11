@@ -1,0 +1,62 @@
+; PICA200 vertex shader
+
+; Uniforms
+.fvec projection[4], modelView[4]
+
+; Constants
+.constf myconst(0.0, 1.0, 0.5, 0.1)
+.alias  zeros myconst.xxxx ; Vector full of zeros
+.alias  ones  myconst.yyyy ; Vector full of ones
+.alias  halves  myconst.zzzz
+
+; Outputs
+.out outpos position
+.out outclr color
+; .out outview view
+
+; Inputs (defined as aliases for convenience)
+.alias inpos v0
+
+.bool test
+
+.proc normalize3
+	dp4 r15, r8, r8
+	rsq r15, r15
+	mul r8, r15, r8
+.end
+
+.proc main
+	; Force the w component of inpos to be 1.0 (position)
+	mov r0.xyz, inpos
+	mov r0.w,   ones
+
+	; r1 = modelView * inpos
+	dp4 r1.x, modelView[0], r0
+	dp4 r1.y, modelView[1], r0
+	dp4 r1.z, modelView[2], r0
+	dp4 r1.w, modelView[3], r0
+
+	; outview = -r1
+	; mov outview, -r1
+
+	; outpos = projectionMatrix * inpos
+	dp4 outpos.x, projection[0], r1
+	dp4 outpos.y, projection[1], r1
+	dp4 outpos.z, projection[2], r1
+	dp4 outpos.w, projection[3], r1
+    
+	; inpos.xyz0 to r8
+	mov r8.xyz, inpos.xyz
+	mov r8.w,   zeros.w
+
+    ; normalize (operates at r8)
+    call normalize3
+	add r8.xyz, ones.xyz, r8.xyz
+	mul r8.xyz, halves.xyz, r8.xyz
+
+	mov outclr.xyz, r8.xyz
+	mov outclr.w, ones.w
+
+	; We're finished
+	end
+.end
