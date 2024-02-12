@@ -1,0 +1,52 @@
+; PICA200 vertex shader
+
+; Uniforms
+.fvec projection[4], modelView[4]
+.fvec wrap
+
+; Constants
+.constf myconst(0.0, 1.0, 0.5, 0.1)
+.alias  zeros myconst.xxxx ; Vector full of zeros
+.alias  ones  myconst.yyyy ; Vector full of ones
+
+; Outputs
+.out outpos position
+.out outtc0 texcoord0.st
+
+; Inputs (defined as aliases for convenience)
+.alias inpos v0
+.alias intc0 v1
+
+.bool test
+
+.proc main
+	; Force the w component of inpos to be 1.0 (position)
+	mov r0.xyz, inpos
+	mov r0.w,   ones
+
+	; r1 = modelView * inpos
+	dp4 r1.x, modelView[0], r0
+	dp4 r1.y, modelView[1], r0
+	dp4 r1.z, modelView[2], r0
+	dp4 r1.w, modelView[3], r0
+
+	; outview = -r1
+	; mov outview, -r1
+
+	; outpos = projectionMatrix * inpos
+	dp4 outpos.x, projection[0], r1
+	dp4 outpos.y, projection[1], r1
+	dp4 outpos.z, projection[2], r1
+	dp4 outpos.w, projection[3], r1
+	
+	; load texcoord0
+
+	;r0 = wrap uniform * wrap rate (intc0.p)
+	mul r0.st, wrap.st, intc0.pp
+	;outtc0 = r0 + uv (intc0.st)
+	add outtc0.st, r0.st, intc0.st
+	mov outtc0.pq, zeros
+
+	; We're finished
+	end
+.end
