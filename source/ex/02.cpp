@@ -189,7 +189,7 @@ void run02()
 
         if (kDown & KEY_START)
         {
-            return; // break exercise
+            break; // break exercise
         }
         if (kHeld & KEY_LEFT)
         {

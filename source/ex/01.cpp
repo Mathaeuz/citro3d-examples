@@ -149,7 +149,7 @@ void run01()
         u32 kHeld = hidKeysHeld();
         if (kDown & KEY_START)
         {
-            return; // break exercise
+            break; // break exercise
         }
         if (kHeld & KEY_LEFT)
         {

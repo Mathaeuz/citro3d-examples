@@ -112,7 +112,7 @@ void run00()
         u32 kDown = hidKeysDown();
         if (kDown & KEY_START)
         {
-            return; // break exercise
+            break; // break exercise
         }
 
         if (osGet3DSliderState() > 0.0f)

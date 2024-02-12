@@ -9,7 +9,7 @@ int main()
 	gfxInitDefault();
 	consoleInit(GFX_BOTTOM, NULL);
 	const int exerciseCount = getExerciseCount();
-	int selection = exerciseCount-1;
+	int selection = exerciseCount - 1;
 
 	// Main loop
 	while (aptMainLoop())
@@ -37,7 +37,10 @@ int main()
 		if (kDown & KEY_A)
 		{
 			consoleClear();
+			gfxExit();
+			gfxInitDefault();
 			runExercise(selection);
+			gfxExit();
 			gfxInitDefault();
 			consoleInit(GFX_BOTTOM, NULL);
 		}

@@ -2,8 +2,9 @@
 #include "ex/00.h"
 #include "ex/01.h"
 #include "ex/02.h"
+#include "ex/03.h"
 
-const int getExerciseCount() { return 3; }
+const int getExerciseCount() { return 4; }
 
 const char *getExerciseName(int id)
 {
@@ -15,6 +16,8 @@ const char *getExerciseName(int id)
         return "Elements - Normal from position";
     case 2:
         return "Elements - Textured";
+    case 3:
+        return "Imgui portlibs";
     }
 }
 
@@ -30,6 +33,9 @@ void runExercise(int id)
         return;
     case 2:
         run02();
+        return;
+    case 3:
+        run03();
         return;
     }
 }

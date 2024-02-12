@@ -33,9 +33,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source source/ex imgui
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	include imgui
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs
@@ -57,13 +57,13 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcitro3d -lctru -lm
+LIBS	:= -limgui-impl-ctr -lstdc++ -lcitro3d -lctru -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CTRULIB)
+LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 
 
 #---------------------------------------------------------------------------------
@@ -81,16 +81,9 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
-FOLDERS		:=
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(dir $(wildcard $(dir)/*/)))
-CPPFILES	:=	$(foreach dir,$(CPPFILES), $(wildcard $(dir)*.cpp))
-CPPFILES	:=  $(foreach dir,$(SOURCES),$(subst $(dir)/,,$(CPPFILES)))
-FOLDERS		:=  $(FOLDERS) $(addprefix $(BUILD)/,$(dir $(CPPFILES)))
-CPPFILES	:=	$(CPPFILES) $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
 SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
@@ -169,13 +162,10 @@ endif
 
 #---------------------------------------------------------------------------------
 all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
-	@ECHO cpp: $(CPPFILES)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
 	@mkdir -p $@
-	@echo f: $@/$(FOLDERS) 
-	@mkdir -p $(FOLDERS)
 
 ifneq ($(GFXBUILD),$(BUILD))
 $(GFXBUILD):

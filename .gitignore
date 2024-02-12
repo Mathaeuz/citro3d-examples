@@ -1,5 +1,6 @@
-build/
-.vscode/
+/build
+/.vscode
+/imgui
 *.3dsx
 *.elf
 *.smdh
