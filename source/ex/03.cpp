@@ -12,7 +12,7 @@ namespace
     void renderGUI()
     {
         ImGui::NewFrame();
-        ImGui::Begin("Settings", NULL, ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Settings", NULL);
         ImGui::ColorPicker3("A:", colors, ImGuiColorEditFlags_DisplayHex);
         ImGui::End();
         ImGui::Render();
